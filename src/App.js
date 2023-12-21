@@ -40,12 +40,9 @@ class App extends React.Component {
     weather: {},
   };
 
-  constructor(props) {
-    super(props);
-    this.fetchWeather = this.fetchWeather.bind(this);
-  }
-
   fetchWeather = async () => {
+    if (this.state.location.length < 2) return this.setState({ weather: {} });
+
     try {
       this.setState({ isLoading: true });
 
@@ -79,6 +76,22 @@ class App extends React.Component {
   };
 
   setLocation = (e) => this.setState({ location: e.target.value });
+
+  //useEffect []
+  componentDidMount() {
+    // this.fetchWeather();
+
+    this.setState({ location: localStorage.getItem("location") || "" });
+  }
+
+  //useEffect [location]
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.location !== prevState.location) {
+      this.fetchWeather();
+
+      localStorage.setItem("location", this.state.location);
+    }
+  }
 
   render() {
     return (
@@ -122,6 +135,10 @@ class Input extends React.Component {
 }
 
 class Weather extends React.Component {
+  // componentWillUnmount() {
+  //   console.log();
+  // }
+
   render() {
     const {
       temperature_2m_max: max,
